@@ -119,6 +119,21 @@ export const HealthAPI = {
     return data.reverse(); // Reverse so oldest is first for the chart
   },
 
+  getRecentSymptoms: async (userId: string) => {
+    const { data, error } = await supabase
+      .from('symptoms')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(5);
+
+    if (error) {
+      console.error('Error fetching symptoms:', error.message);
+      return [];
+    }
+    return data;
+  },
+
   /**
    * Logs a new blood pressure reading
    */
