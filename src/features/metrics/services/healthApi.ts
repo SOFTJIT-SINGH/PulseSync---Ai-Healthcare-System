@@ -66,6 +66,41 @@ export const HealthAPI = {
     }
     return data;
   },
+
+  addMedication: async (userId: string, name: string, dosage: string, scheduledTime: string) => {
+    const { data, error } = await supabase
+      .from('medications')
+      .insert([{ 
+        user_id: userId, 
+        name, 
+        dosage, 
+        scheduled_time: scheduledTime, 
+        is_active: true 
+      }])
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error adding medication:', error.message);
+      return null;
+    }
+    return data;
+  },
+
+  getAllMedications: async (userId: string) => {
+    const { data, error } = await supabase
+      .from('medications')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching all meds:', error.message);
+      return [];
+    }
+    return data;
+  },
+
   /**
    * Fetches the last 7 days of blood pressure readings
    */

@@ -5,9 +5,9 @@ import { Heart, Activity, User } from 'lucide-react-native';
 import DashboardScreen from '../features/dashboard/screens/DashboardScreen';
 import { BottomTabParamList } from './types';
 import ProfileScreen from '../features/dashboard/screens/ProfileScreen';
+import MetricsScreen from '../features/dashboard/screens/MetricsScreen';
 
 // Temporary placeholders for our other tabs
-const MetricsScreen = () => <View className="flex-1 items-center justify-center bg-slate-50"><Text>Metrics Module Coming Soon</Text></View>;
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 
 export default function TabNavigator() {
