@@ -6,7 +6,12 @@ export type BottomTabParamList = {
   Profile: undefined;
 };
 
+export type AuthStackParamList = {
+  Login: undefined;
+  Register: undefined;
+};
+
 export type RootStackParamList = {
+  Auth: NavigatorScreenParams<AuthStackParamList>;
   Main: NavigatorScreenParams<BottomTabParamList>;
-  // We will add the Auth stack here in Phase 2
 };
