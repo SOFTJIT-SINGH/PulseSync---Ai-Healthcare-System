@@ -1,3 +1,4 @@
+import 'react-native-url-polyfill/auto';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import RootNavigator from './src/navigation/RootNavigator';

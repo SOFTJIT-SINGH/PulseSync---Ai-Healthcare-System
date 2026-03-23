@@ -9,6 +9,8 @@ export type BottomTabParamList = {
 export type AuthStackParamList = {
   Login: undefined;
   Register: undefined;
+  OtpVerification: { email: string }; // We pass the email here
+  ResetPassword: undefined;
 };
 
 export type RootStackParamList = {

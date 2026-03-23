@@ -7,6 +7,8 @@ import LoginScreen from '../features/auth/screens/LoginScreen';
 import RegisterScreen from '../features/auth/screens/RegisterScreen';
 import { useAuthStore } from '../features/auth/store/useAuthStore';
 import { RootStackParamList, AuthStackParamList } from './types';
+import OtpScreen from '../features/auth/screens/OtpScreen';
+import ResetPasswordScreen from '../features/auth/screens/ResetPasswordScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
@@ -16,6 +18,8 @@ function AuthNavigator() {
     <AuthStack.Navigator screenOptions={{ headerShown: false }}>
       <AuthStack.Screen name="Login" component={LoginScreen} />
       <AuthStack.Screen name="Register" component={RegisterScreen} />
+      <AuthStack.Screen name="OtpVerification" component={OtpScreen} />
+      <AuthStack.Screen name="ResetPassword" component={ResetPasswordScreen} />
     </AuthStack.Navigator>
   );
 }

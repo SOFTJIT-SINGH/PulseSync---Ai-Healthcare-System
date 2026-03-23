@@ -42,7 +42,7 @@ export const HealthAPI = {
       .from('profiles')
       .select('*')
       .eq('id', userId)
-      .single();
+      .maybeSingle(); // <-- CHANGED from .single() to .maybeSingle()
 
     if (error) {
       console.error('Error fetching profile:', error.message);

@@ -51,6 +51,8 @@ export default function DashboardScreen() {
     }
   };
 
+  const firstName = userProfile?.name ? userProfile.name.split(' ')[0] : 'User';
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -59,9 +61,9 @@ export default function DashboardScreen() {
         <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
           {/* Header Section */}
           <View className="rounded-b-3xl bg-teal-600 px-6 pb-6 pt-16 shadow-sm">
-            <Text className="text-lg font-medium text-teal-100">Good Morning,</Text>
-            <Text className="mt-1 text-3xl font-bold text-white">{userProfile.name}</Text>
-            <Text className="mt-2 text-teal-100">Let&aposs check in on your health today.</Text>
+            <Text className="text-lg font-medium text-teal-100">Welcome,</Text>
+            <Text className="mt-1 text-3xl font-bold text-white">{firstName}</Text>
+            <Text className="mt-2 text-teal-100">Let&apos;s check in on your health today.</Text>
           </View>
 
           <View className="mt-6 space-y-6 px-5">
@@ -103,7 +105,9 @@ export default function DashboardScreen() {
 
             {/* Quick Entry Section */}
             <View className="rounded-2xl bg-white p-5 shadow-sm">
-              <Text className="mb-4 text-lg font-semibold text-slate-800">Log Today&aposs Reading</Text>
+              <Text className="mb-4 text-lg font-semibold text-slate-800">
+                Log Today&aposs Reading
+              </Text>
               <View className="flex-row items-center justify-between">
                 <View className="mr-3 flex-1">
                   <Text className="mb-1 ml-1 text-xs text-slate-500">SYS (mmHg)</Text>

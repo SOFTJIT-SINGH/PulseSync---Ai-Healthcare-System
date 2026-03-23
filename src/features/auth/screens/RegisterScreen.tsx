@@ -2,25 +2,36 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { supabase } from '../../../core/supabase';
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { AuthStackParamList } from '../../../navigation/types';
+
+type NavigationProp = NativeStackNavigationProp<AuthStackParamList, 'Register'>;
 
 export default function RegisterScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
   const [bloodType, setBloodType] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleRegister = async () => {
-    if (!email || !password || !name || !age || !bloodType) {
+    // 1. Basic Validation
+    if (!email || !password || !confirmPassword || !name || !age || !bloodType) {
       Alert.alert('Error', 'Please fill out all fields.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match.');
       return;
     }
 
     setLoading(true);
     
-    // 1. Create the Auth User
+    // 2. Create the Auth User in Supabase
     const { data: authData, error: authError } = await supabase.auth.signUp({ 
       email, 
       password 
@@ -32,7 +43,7 @@ export default function RegisterScreen() {
       return;
     }
 
-    // 2. Create the Database Profile
+    // 3. Create the Database Profile
     if (authData.user) {
       const { error: profileError } = await supabase.from('profiles').insert([
         { 
@@ -44,12 +55,14 @@ export default function RegisterScreen() {
       ]);
 
       if (profileError) {
-        Alert.alert('Profile Error', 'Account created, but failed to save profile details.');
+        console.error('Profile Insert Error:', profileError);
+        Alert.alert('Profile Error', 'Account created, but failed to save medical details. Update them in your Profile later.');
       }
     }
     
     setLoading(false);
-    // Note: Supabase will automatically sign them in and update our Zustand listener
+    // Since we turned off email confirmations in Supabase, 
+    // Zustand will instantly catch the new session and route you to the Dashboard!
   };
 
   return (
@@ -82,6 +95,11 @@ export default function RegisterScreen() {
           <View>
             <Text className="text-sm font-medium text-slate-700 mb-1 ml-1">Password</Text>
             <TextInput className="bg-white p-4 rounded-xl border border-slate-200" placeholder="••••••••" value={password} onChangeText={setPassword} secureTextEntry />
+          </View>
+
+          <View>
+            <Text className="text-sm font-medium text-slate-700 mb-1 ml-1">Confirm Password</Text>
+            <TextInput className="bg-white p-4 rounded-xl border border-slate-200" placeholder="••••••••" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry />
           </View>
 
           <TouchableOpacity className={`p-4 rounded-xl items-center mt-4 ${loading ? 'bg-teal-400' : 'bg-teal-600'}`} onPress={handleRegister} disabled={loading}>
