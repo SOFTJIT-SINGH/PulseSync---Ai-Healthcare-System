@@ -6,6 +6,9 @@ export interface ProfileRow {
   name: string;
   age: number;
   blood_type: string;
+  weight_kg?: number; // New
+  height_cm?: number; // New
+  gender?: string; // New
 }
 
 export interface BloodPressureRow {
@@ -33,7 +36,6 @@ export interface MedicationLogRow {
 
 // --- API Service Methods ---
 export const HealthAPI = {
-  
   /**
    * Fetches the user's profile data
    */
@@ -50,7 +52,20 @@ export const HealthAPI = {
     }
     return data;
   },
+  updateProfile: async (userId: string, updates: Partial<ProfileRow>) => {
+    // We use upsert so if the old account is missing a profile row, it creates one automatically
+    const { data, error } = await supabase
+      .from('profiles')
+      .upsert({ id: userId, ...updates })
+      .select()
+      .single();
 
+    if (error) {
+      console.error('Error updating profile:', error.message);
+      return null;
+    }
+    return data;
+  },
   /**
    * Fetches the last 7 days of blood pressure readings
    */
@@ -72,7 +87,11 @@ export const HealthAPI = {
   /**
    * Logs a new blood pressure reading
    */
-  logBloodPressure: async (userId: string, systolic: number, diastolic: number): Promise<BloodPressureRow | null> => {
+  logBloodPressure: async (
+    userId: string,
+    systolic: number,
+    diastolic: number
+  ): Promise<BloodPressureRow | null> => {
     const { data, error } = await supabase
       .from('blood_pressure')
       .insert([{ user_id: userId, systolic, diastolic }])
@@ -134,21 +153,23 @@ export const HealthAPI = {
    * Toggles a medication as taken/untaken for TODAY.
    * Uses an upsert to either create the log or update it if it exists.
    */
-  toggleMedicationTaken: async (userId: string, medicationId: string, currentTakenStatus: boolean) => {
+  toggleMedicationTaken: async (
+    userId: string,
+    medicationId: string,
+    currentTakenStatus: boolean
+  ) => {
     const today = new Date().toISOString().split('T')[0];
     const newStatus = !currentTakenStatus;
 
-    const { error } = await supabase
-      .from('medication_logs')
-      .upsert(
-        { 
-          user_id: userId, 
-          medication_id: medicationId, 
-          log_date: today, 
-          taken: newStatus 
-        },
-        { onConflict: 'medication_id, log_date' } // Prevents duplicates for the same day
-      );
+    const { error } = await supabase.from('medication_logs').upsert(
+      {
+        user_id: userId,
+        medication_id: medicationId,
+        log_date: today,
+        taken: newStatus,
+      },
+      { onConflict: 'medication_id, log_date' } // Prevents duplicates for the same day
+    );
 
     if (error) {
       console.error('Error toggling medication:', error.message);
@@ -172,5 +193,5 @@ export const HealthAPI = {
       return null;
     }
     return data;
-  }
+  },
 };
